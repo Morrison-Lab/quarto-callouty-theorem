@@ -100,6 +100,11 @@ local callouty_meta = nil
 -- reads the metadata
 local function read_meta(meta)
   callouty_meta = stringify_meta(meta['callouty-theorem'])
+  quarto.doc.add_html_dependency({
+    name = 'callouty-theorem',
+    version = '1.1.0',
+    stylesheets = {'callouty-theorem.css'}
+  })
 end
 
 ---- main logic
@@ -107,6 +112,12 @@ end
 local function spawn_callout_title(type_title, name)
   local my_name = pandoc.List({type_title})
   if name then
+    -- A name that already opens with the type label ("Proof of ...") is the
+    -- title on its own; prefixing the label would double it ("Proof (Proof of ...)").
+    local name_text = pandoc.utils.stringify(name)
+    if pandoc.text.lower(name_text):sub(1, #type_title) == pandoc.text.lower(type_title) then
+      return pandoc.utils.blocks_to_inlines(pandoc.Blocks(name))
+    end
     my_name:insert(" (")
     my_name:extend(pandoc.utils.blocks_to_inlines(pandoc.Blocks(name)))
     my_name:insert(")")
@@ -212,6 +223,12 @@ local function calloutify(el, is_proof)
   end
 
   apply_div_callout_overrides(callout_tbl, source_attr)
+
+  -- The header now names the element, so mark the callout for the stylesheet
+  -- to drop the body's repeat of it.
+  if callout_tbl.title then
+    callout_tbl.attr = pandoc.Attr('', {'callouty-titled'})
+  end
 
   callout_tbl.content = theorem_ctor(el)
   return quarto.Callout(callout_tbl)
