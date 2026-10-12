@@ -46,6 +46,7 @@ callouty-theorem:
 
 Above will wrap all proofs into collapsable callout blocks with its icon and an overrided title. 
 
+- `title-ref: true` (numbered theorem types, with `override-title: false`) puts the numbered label, such as "Example 1 (name)", in the callout header via a cross-reference to the element's own id, so the header is not left with Quarto's default title (the type key, e.g. "Exm"). Hide the label repeated in the body with CSS: `.callout-exm .callout-body .theorem-title { display: none; }`.
 - You can override callout settings for individual theorem/proof divs by adding attributes directly on the div. Per-div attributes take precedence over the global `callouty-theorem` metadata config.
 
 See the source code of [example.qmd](example.qmd) for details.
