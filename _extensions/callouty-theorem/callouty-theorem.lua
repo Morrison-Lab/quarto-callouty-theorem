@@ -100,6 +100,11 @@ local callouty_meta = nil
 -- reads the metadata
 local function read_meta(meta)
   callouty_meta = stringify_meta(meta['callouty-theorem'])
+  quarto.doc.add_html_dependency({
+    name = 'callouty-theorem',
+    version = '1.1.0',
+    stylesheets = {'callouty-theorem.css'}
+  })
 end
 
 ---- main logic
@@ -107,6 +112,12 @@ end
 local function spawn_callout_title(type_title, name)
   local my_name = pandoc.List({type_title})
   if name then
+    -- A name that already opens with the type label ("Proof of ...") is the
+    -- title on its own; prefixing the label would double it ("Proof (Proof of ...)").
+    local name_text = pandoc.utils.stringify(name)
+    if pandoc.text.lower(name_text):sub(1, #type_title) == pandoc.text.lower(type_title) then
+      return pandoc.utils.blocks_to_inlines(pandoc.Blocks(name))
+    end
     my_name:insert(" (")
     my_name:extend(pandoc.utils.blocks_to_inlines(pandoc.Blocks(name)))
     my_name:insert(")")
@@ -182,9 +193,12 @@ local function calloutify(el, is_proof)
   end
 
   local override_title = false
+  local title_ref = false
   local callout_tbl = {type = "note"}
   if type(callouty_meta[typ]) == "table" then
     override_title = callouty_meta[typ]["override-title"] or override_title
+    title_ref = callouty_meta[typ]["title-ref"] == true
+      or callouty_meta[typ]["title-ref"] == "true"
     if type(callouty_meta[typ]["callout"]) == "table" then
       callout_tbl = shallow_copy(callouty_meta[typ]["callout"])
     end
@@ -193,9 +207,28 @@ local function calloutify(el, is_proof)
   local source_attr = (el.div and el.div.attr) or el.attr
   if override_title and my_types[typ] then
     callout_tbl.title = spawn_callout_title(my_types[typ].title, el.name)
+  elseif title_ref and not is_proof and el.identifier and el.identifier ~= "" then
+    -- Put the numbered label ("Example 1 (name)") in the callout header.
+    -- A citation of the element's own id resolves to "Example 1" in the
+    -- crossref stage; the body keeps the Theorem node, so numbering is unchanged.
+    local title = pandoc.List({pandoc.Cite(
+      {pandoc.Str("@" .. el.identifier)},
+      {pandoc.Citation(el.identifier, "AuthorInText")})})
+    if el.name then
+      title:insert(pandoc.Str(" ("))
+      title:extend(pandoc.utils.blocks_to_inlines(pandoc.Blocks(el.name)))
+      title:insert(pandoc.Str(")"))
+    end
+    callout_tbl.title = title
   end
 
   apply_div_callout_overrides(callout_tbl, source_attr)
+
+  -- The header now names the element, so mark the callout for the stylesheet
+  -- to drop the body's repeat of it.
+  if callout_tbl.title then
+    callout_tbl.attr = pandoc.Attr('', {'callouty-titled'})
+  end
 
   callout_tbl.content = theorem_ctor(el)
   return quarto.Callout(callout_tbl)
