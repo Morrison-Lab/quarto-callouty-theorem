@@ -103,7 +103,8 @@ local function read_meta(meta)
   quarto.doc.add_html_dependency({
     name = 'callouty-theorem',
     version = '1.1.0',
-    stylesheets = {'callouty-theorem.css'}
+    stylesheets = {'callouty-theorem.css'},
+    scripts = {'callouty-theorem.js'}
   })
 end
 
