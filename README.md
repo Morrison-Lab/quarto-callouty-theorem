@@ -46,6 +46,7 @@ callouty-theorem:
 
 Above will wrap all proofs into collapsable callout blocks with its icon and an overrided title. 
 
+- A numbered element's header reads "Solution 3 (name)" under `override-title: true` too, and `title-ref: true` works for proofs, remarks and solutions that carry a `#prf-`, `#rem-` or `#sol-` id, so every numbered type can show its type, number and name in the title bar. An unnumbered `.proof` or `.solution` keeps the plain type label.
 - `title-ref: true` (numbered theorem types, with `override-title: false`) puts the numbered label, such as "Example 1 (name)", in the callout header via a cross-reference to the element's own id, so the header is not left with Quarto's default title (the type key, e.g. "Exm"). Hide the label repeated in the body with CSS: `.callout-exm .callout-body .theorem-title { display: none; }`.
 - A callout whose header carries the title (`override-title: true` or `title-ref`) does not repeat it in the body: the extension adds a stylesheet that hides the body's theorem or proof title. A name that already starts with the type label, such as "Proof of ...", is used as the whole title rather than "Proof (Proof of ...)".
 - With `title-ref`, the label in a folding callout's header is a link to the element's `#id`.
