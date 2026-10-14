@@ -79,6 +79,14 @@ local proof_types = {
   }
 }
 
+-- id prefixes Quarto registers as crossref types: the theorem types plus the
+-- proof environments (prf, rem, sol)
+local numbered_prefixes = {
+  thm = true, lem = true, cor = true, prp = true, cnj = true,
+  def = true, exm = true, exr = true, alg = true,
+  prf = true, rem = true, sol = true
+}
+
 ---- meta reading stuff
 
 -- recursively iterates through the metadata, stringifying all pandoc.Str elements
@@ -221,7 +229,10 @@ local function calloutify(el, is_proof)
   local source_attr = (el.div and el.div.attr) or el.attr
   -- Numbered elements (theorem types, and proofs, remarks and solutions that
   -- carry a #rem-/#sol-/#prf- id) can cite their own label.
-  local numbered_id = el.identifier and refType(el.identifier) and el.identifier or nil
+  -- Only ids whose prefix Quarto registers as a crossref type resolve; any
+  -- other id ({.solution #my-answer}) stays an unnumbered element.
+  local ref_prefix = refType(el.identifier)
+  local numbered_id = ref_prefix and numbered_prefixes[ref_prefix] and el.identifier or nil
   if override_title and my_types[typ] then
     callout_tbl.title = spawn_callout_title(my_types[typ].title, el.name, numbered_id)
   elseif title_ref and numbered_id then
