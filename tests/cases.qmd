@@ -1,0 +1,75 @@
+---
+title: "callouty-theorem cases"
+format:
+  html:
+    filters:
+      - callouty-theorem
+  pdf:
+    filters:
+      - callouty-theorem
+
+callouty-theorem:
+  thm: # explicit appearance: outside HTML still a minimal box
+    callout:
+      type: note
+      appearance: default
+  lem: # override-title off: never a bar titled "Note"
+    override-title: false
+    callout:
+      type: note
+  def:
+    callout:
+      type: note
+  proof:
+    callout:
+      type: note
+      appearance: default
+      collapse: true
+  remark: # override-title off on a proof-like type: never a bar titled "Note"
+    override-title: false
+    callout:
+      type: tip
+---
+
+Used by `check-cases.js` (HTML) and `check-pdf.js` (PDF), after `quarto render tests/cases.qmd`: no case may show a bar titled "Note" or "Tip" above a body that prints its own heading.
+It is excluded from the project render (`render:` in `_quarto-website.yml`), so render it by hand.
+
+:::{#thm-explicit}
+## Explicit appearance
+
+Every even number above two is not prime.
+:::
+
+:::{#lem-no-override}
+## Override off
+
+One is not prime.
+:::
+
+:::{#def-plain}
+## Plain
+
+A prime is a number with two divisors.
+:::
+
+:::{#thm-div-default appearance="default"}
+## Per-div appearance
+
+A per-div `appearance="default"` must not bring the bar back outside HTML.
+:::
+
+:::{.remark}
+## Remark with override off
+
+A remark whose title is not overridden.
+:::
+
+:::{.proof}
+## Proof (see [@eq-inner])
+
+By [@eq-inner].
+
+$$
+2 + 2 = 4
+$$ {#eq-inner}
+:::

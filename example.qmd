@@ -107,6 +107,13 @@ Prove that the quadratic residues modulo $p$ form a subgroup of the group of uni
 Use the fact that the group of units modulo $p$ is cyclic.
 :::
 
+:::{.solution}
+
+## Solution to [@exr-quadratic-residue]
+
+This solution has no id, so its title has no label of its own and the cross-reference in its name stays a link.
+:::
+
 ### On default behaviors
 
 :::{#cor-default}

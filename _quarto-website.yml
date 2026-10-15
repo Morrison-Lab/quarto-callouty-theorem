@@ -1,5 +1,8 @@
 project:
   type: website
+  render:
+    - "*.qmd"
+    - "!tests/" # test pages render by hand; the site has no TeX for their PDF
 
 website:
   site-url: "https://sun123zxy.github.io/quarto-callouty-theorem/"
