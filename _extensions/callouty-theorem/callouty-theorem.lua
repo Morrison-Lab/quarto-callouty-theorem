@@ -279,6 +279,14 @@ local function calloutify_float(el)
   if not callouty_meta or not callouty_meta[typ] then
     return el
   end
+  -- Quarto moves a margin float out of its container, which would leave the
+  -- callout empty in the main column, so a margin float stays as it is.
+  if el.classes and el.classes:includes("column-margin") then
+    return el
+  end
+  if not el.__quarto_custom_node then
+    return el
+  end
   local callout_tbl = {type = "note"}
   if type(callouty_meta[typ]) == "table" and type(callouty_meta[typ]["callout"]) == "table" then
     callout_tbl = shallow_copy(callouty_meta[typ]["callout"])

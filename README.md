@@ -55,6 +55,7 @@ Above will wrap all proofs into collapsable callout blocks with its icon and an 
   A `::: {#fig-x}` div, a figure image with an `#fig-` id, and a table whose caption carries a `{#tbl-x}` id each get wrapped in a callout, and the numbering and `@fig-x` cross-references are unchanged.
   The caption already reads "Figure 1: ...", so there is no `override-title` or `title-ref` for these; use `appearance: minimal`, which draws the colored bar and no header.
   A panel of subfigures is one callout, and its subfigures are not wrapped again.
+  A float in the margin (`.column-margin`) is left as it is, since Quarto moves it out of its container.
   Per-div attributes (`appearance`, `collapse`, `icon`, `type`) work as they do for theorems.
 - You can override callout settings for individual theorem/proof divs by adding attributes directly on the div. Per-div attributes take precedence over the global `callouty-theorem` metadata config.
 
