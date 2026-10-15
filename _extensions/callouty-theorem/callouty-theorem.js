@@ -1,6 +1,6 @@
 // Shows the element's number in a callout header as plain text with a "§" anchor beside it.
 //
-// With `title-ref: true` the header of a callout holds a cross-reference to the
+// The header of a numbered element's callout holds a cross-reference to the
 // element's own id ("Example 1"), which Quarto resolves to a link.
 // A link in the header made the whole label a hyperlink, and the header's bold type
 // reached its hover preview.
@@ -26,16 +26,35 @@
     }
   }, true);
 
+  // The element behind an href that points into this page, or null.
+  function targetOf(link) {
+    var url;
+    try {
+      url = new URL(link.getAttribute("href"), location.href);
+      if (url.origin + url.pathname !== location.origin + location.pathname || !url.hash) {
+        return null;
+      }
+      return document.getElementById(decodeURIComponent(url.hash.slice(1)));
+    } catch (e) {
+      return null;
+    }
+  }
+
   document.addEventListener("DOMContentLoaded", function () {
-    // Only the element's own label, the first link in the title: a cross-reference
-    // inside the element's name, as in "Solution to Exercise 1", stays a link.
-    var seen = [];
+    // Only the element's own label: the first link in the title whose target is the
+    // callout itself or sits inside it. A cross-reference in the element's name, as in
+    // "Solution to Exercise 1", points at another callout and stays a link, and an
+    // unnumbered element has no label link at all.
+    var seen = new Set();
     document.querySelectorAll(LABEL).forEach(function (link) {
       var container = link.closest(".callout-title-container");
-      if (seen.indexOf(container) !== -1) { return; }
-      seen.push(container);
+      var callout = container && container.closest(".callout");
+      var target = targetOf(link);
+      if (!callout || !target || seen.has(container)) { return; }
+      if (target !== callout && !callout.contains(target)) { return; }
+      seen.add(container);
       var text = link.textContent.trim();
-      var kind = text.split(/[\s ]/)[0].toLowerCase();
+      var kind = text.split(/[\s\u00a0]/)[0].toLowerCase();
       var label = document.createElement("span");
       label.className = "callouty-label";
       label.textContent = text;
@@ -84,11 +103,7 @@
       }
       // On a served site Quarto's navigation script has already made the href
       // absolute, so compare the resolved URL, not a leading "#".
-      var url = new URL(link.href, location.href);
-      if (url.origin + url.pathname !== location.origin + location.pathname || !url.hash) {
-        return;
-      }
-      var target = document.getElementById(decodeURIComponent(url.hash.slice(1)));
+      var target = targetOf(link);
       var callout = target && target.closest(".callout");
       if (!callout) {
         return;

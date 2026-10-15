@@ -49,6 +49,10 @@ Above will wrap all proofs into collapsable callout blocks with its icon and an 
 Since 1.4.0 the defaults put the type, number and name of a theorem-type or proof-type div on a title bar of its own, apart from the body, and make every wrapped div foldable (open unless `collapse: true`).
 So `thm: {callout: {type: note}}` is enough: `override-title` defaults to `true`, `appearance` to `default` and `collapse` to `false`.
 Set `override-title: false` (optionally with `title-ref: true`) or `appearance: minimal` to opt out; a `minimal` or `simple` callout has no title bar.
+`title-ref: true` only takes effect together with `override-title: false`, because `override-title` is now `true` by default and builds the numbered header itself; on its own `title-ref` does nothing.
+Outside HTML (PDF and Word), a theorem-type div keeps its own heading in the body ("Definition 1.1 (name)"), and no stylesheet there can hide it, so since 1.4.1 these types stay a minimal box with that heading instead of adding a title bar that repeats it; set `appearance` explicitly to get a bar there anyway.
+Proofs, solutions and the other proof-type divs keep their title bar in every format.
+Since 1.4.1 the "§" link goes only to a link in the title whose target is the callout itself or sits inside it, so an unnumbered div whose name cites another element ("Solution to @exr-1") keeps that link as it is.
 The number in the title bar is plain text followed by a "§" link to the div's `#id`.
 Only the label gets the link; a cross-reference inside the name, as in "Solution to Exercise 1", stays an ordinary link.
 
