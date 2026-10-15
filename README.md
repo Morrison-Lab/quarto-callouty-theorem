@@ -53,6 +53,12 @@ Above will wrap all proofs into collapsable callout blocks with its icon and an 
   Since 1.2.3 a script makes this swap in the browser, so the label is not itself a hyperlink and its hover preview, which inherited the header's bold type, is gone.
   Bootstrap's fold toggle would swallow a click on the "§", so the script also lets that click through: the anchor follows its link and leaves the fold alone, while the rest of the header and the chevron still fold.
 - Hovering a cross-reference to an element inside a callout previews the whole callout, open, with its header and colour bar, rather than the bare inner div.
+- Since 1.3.0, figures and tables are supported too, under the keys `fig` and `tbl`.
+  A `::: {#fig-x}` div, a figure image with an `#fig-` id, and a table whose caption carries a `{#tbl-x}` id each get wrapped in a callout, and the numbering and `@fig-x` cross-references are unchanged.
+  The caption already reads "Figure 1: ...", so there is no `override-title` or `title-ref` for these; use `appearance: minimal`, which draws the colored bar and no header.
+  A panel of subfigures is one callout, and its subfigures are not wrapped again.
+  A float in the margin (`.column-margin`) is left as it is, since Quarto moves it out of its container.
+  Per-div attributes (`appearance`, `collapse`, `icon`, `type`) work as they do for theorems.
 - You can override callout settings for individual theorem/proof divs by adding attributes directly on the div. Per-div attributes take precedence over the global `callouty-theorem` metadata config.
 
 See the source code of [example.qmd](example.qmd) for details.
