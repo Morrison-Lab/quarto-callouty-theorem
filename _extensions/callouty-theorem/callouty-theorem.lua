@@ -110,7 +110,7 @@ local function read_meta(meta)
   callouty_meta = stringify_meta(meta['callouty-theorem'])
   quarto.doc.add_html_dependency({
     name = 'callouty-theorem',
-    version = '1.4.1',
+    version = '1.4.2',
     stylesheets = {'callouty-theorem.css'},
     scripts = {'callouty-theorem.js'}
   })
@@ -315,6 +315,12 @@ end
 local float_types = { fig = true, tbl = true }
 
 local function calloutify_float(el)
+  -- In LaTeX the callout is a tcolorbox, and footnotes inside one (a table of links
+  -- with links-as-notes) run the footnote counter past 26 with "Counter too large".
+  -- A figure or table already stands out by its caption, so PDF keeps it plain.
+  if quarto.doc.is_format("latex") then
+    return el
+  end
   local typ = refType(el.identifier)
   if not typ or not float_types[typ] then
     return el

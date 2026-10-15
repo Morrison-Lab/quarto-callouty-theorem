@@ -69,6 +69,8 @@ Only the label gets the link; a cross-reference inside the name, as in "Solution
   A panel of subfigures is one callout, and its subfigures are not wrapped again.
   A float in the margin (`.column-margin`) is left as it is, since Quarto moves it out of its container.
   Per-div attributes (`appearance`, `collapse`, `icon`, `type`) work as they do for theorems.
+  Since 1.4.2, a figure or table is not wrapped in LaTeX (PDF): the callout is a tcolorbox, and a table with many link footnotes (`links-as-notes`) ran the footnote counter past 26 inside it, failing with "Counter too large".
+  The caption keeps the float recognizable there; HTML and slides are unchanged.
 - You can override callout settings for individual theorem/proof divs by adding attributes directly on the div. Per-div attributes take precedence over the global `callouty-theorem` metadata config.
 
 See the source code of [example.qmd](example.qmd) for details.
