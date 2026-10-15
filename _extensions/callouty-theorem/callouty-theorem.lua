@@ -194,6 +194,26 @@ local function apply_div_callout_overrides(callout_tbl, source_attr)
   end
 end
 
+-- LaTeX cannot nest tcolorbox callouts: Quarto prints an inner one as a block quote
+-- headed by its type name ("Tbl"), so in PDF a float already inside a callout
+-- (an example, say) stays plain.
+-- A callout is seen before its content, so it can mark the floats inside it.
+local nested_floats = {}
+
+local function mark_nested_floats(blocks)
+  if not blocks or not quarto.doc.is_format("latex") then
+    return
+  end
+  -- Inside a callout's content a custom node is still its serialized Div.
+  pandoc.Blocks(blocks):walk({
+    Div = function(div)
+      if div.attributes["__quarto_custom_type"] == "FloatRefTarget" then
+        nested_floats[div.attributes["__quarto_custom_id"]] = true
+      end
+    end
+  })
+end
+
 local function calloutify(el, is_proof)
   local typ, my_types, theorem_ctor
   if is_proof then
@@ -261,6 +281,7 @@ local function calloutify(el, is_proof)
     callout_tbl.attr = pandoc.Attr('', {'callouty-titled'})
   end
 
+  mark_nested_floats((el.div and el.div.content) or el.content)
   callout_tbl.content = theorem_ctor(el)
   return quarto.Callout(callout_tbl)
 end
@@ -284,7 +305,8 @@ local function calloutify_float(el)
   if el.classes and el.classes:includes("column-margin") then
     return el
   end
-  if not el.__quarto_custom_node then
+  local node = el.__quarto_custom_node
+  if not node or nested_floats[node.attributes["__quarto_custom_id"]] then
     return el
   end
   local callout_tbl = {type = "note"}
@@ -310,6 +332,7 @@ return {
     Proof = function(el) return calloutify(el, true) end
   },
   { traverse = 'topdown',
+    Callout = function(callout) mark_nested_floats(callout.content) end,
     FloatRefTarget = calloutify_float
   }
 }
