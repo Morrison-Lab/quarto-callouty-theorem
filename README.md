@@ -50,9 +50,9 @@ Since 1.4.0 the defaults put the type, number and name of a theorem-type or proo
 So `thm: {callout: {type: note}}` is enough: `override-title` defaults to `true`, `appearance` to `default` and `collapse` to `false`.
 Set `override-title: false` (optionally with `title-ref: true`) or `appearance: minimal` to opt out; a `minimal` or `simple` callout has no title bar.
 `title-ref: true` only takes effect together with `override-title: false`, because `override-title` is now `true` by default and builds the numbered header itself; on its own `title-ref` does nothing.
-Outside HTML (PDF and Word), a theorem-type div keeps its own heading in the body ("Definition 1.1 (name)"), and no stylesheet there can hide it, so since 1.4.1 these types stay a minimal box with that heading instead of adding a title bar that repeats it; set `appearance` explicitly to get a bar there anyway.
+Outside HTML (PDF and Word), a theorem-type div keeps its own heading in the body ("Definition 1.1 (name)"), and no stylesheet there can hide it, so since 1.4.1 these types are always a minimal box with that heading, whatever `appearance` or `override-title` says, instead of a title bar that repeats it (or a bar titled "Note").
 Proofs, solutions and the other proof-type divs keep their title bar in every format.
-Since 1.4.1 the "§" link goes only to a link in the title whose target is the callout itself or sits inside it, so an unnumbered div whose name cites another element ("Solution to @exr-1") keeps that link as it is.
+Since 1.4.1 the "§" link goes only to a link in the title whose target is the callout itself or the div that opens its body, so a div whose name cites another element ("Solution to @exr-1", or "Proof (see @lem-inner)" for a lemma nested in the proof) keeps that link as it is.
 The number in the title bar is plain text followed by a "§" link to the div's `#id`.
 Only the label gets the link; a cross-reference inside the name, as in "Solution to Exercise 1", stays an ordinary link.
 

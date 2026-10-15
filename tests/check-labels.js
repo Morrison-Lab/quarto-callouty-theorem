@@ -7,7 +7,7 @@ const assert = require('assert');
 
 (async () => {
   const file = process.argv[2];
-  const browser = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium' });
+  const browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH || '/opt/pw-browsers/chromium' });
   const page = await browser.newPage();
   await page.goto('file://' + file);
   await page.waitForTimeout(500);

@@ -250,7 +250,6 @@ local function calloutify(el, is_proof)
       callout_tbl = shallow_copy(callouty_meta[typ]["callout"])
     end
   end
-  local explicit_appearance = callout_tbl.appearance ~= nil
   if callout_tbl.appearance == nil then callout_tbl.appearance = "default" end
   if callout_tbl.collapse == nil then callout_tbl.collapse = false end
 
@@ -261,12 +260,13 @@ local function calloutify(el, is_proof)
   -- other id ({.solution #my-answer}) stays an unnumbered element.
   local ref_prefix = refType(el.identifier)
   local numbered_id = ref_prefix and numbered_prefixes[ref_prefix] and el.identifier or nil
-  if override_title and my_types[typ] and not is_proof and not quarto.doc.is_format('html') then
+  if my_types[typ] and not is_proof and not quarto.doc.is_format('html') then
     -- Outside HTML a theorem-type body prints its own "Definition 1.1 (name)" line,
     -- and the stylesheet that hides it has no PDF or Word counterpart. A title bar
-    -- would repeat it, so the callout stays a minimal box with the body's heading,
-    -- unless the metadata asks for an appearance.
-    if not explicit_appearance then callout_tbl.appearance = "minimal" end
+    -- would repeat it, and any other appearance would draw a bar with a default
+    -- "Note" title above it, so the callout is always a minimal box with the body's
+    -- heading, whatever the metadata sets for appearance or override-title.
+    callout_tbl.appearance = "minimal"
   elseif override_title and my_types[typ] then
     local header_id = quarto.doc.is_format('html') and numbered_id or nil
     callout_tbl.title = spawn_callout_title(my_types[typ].title, el.name, header_id)

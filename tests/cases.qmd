@@ -1,0 +1,58 @@
+---
+title: "callouty-theorem cases"
+format:
+  html:
+    filters:
+      - callouty-theorem
+  pdf:
+    filters:
+      - callouty-theorem
+
+callouty-theorem:
+  thm: # explicit appearance: outside HTML still a minimal box
+    callout:
+      type: note
+      appearance: default
+  lem: # override-title off: outside HTML still a minimal box
+    override-title: false
+    callout:
+      type: note
+  def:
+    callout:
+      type: note
+  proof:
+    callout:
+      type: note
+      appearance: default
+      collapse: true
+---
+
+Used by `check-cases.js` (HTML) and by eye (PDF): no case may show a "Note" bar above a body that prints its own heading.
+
+:::{#thm-explicit}
+## Explicit appearance
+
+Every even number above two is not prime.
+:::
+
+:::{#lem-no-override}
+## Override off
+
+One is not prime.
+:::
+
+:::{#def-plain}
+## Plain
+
+A prime is a number with two divisors.
+:::
+
+:::{.proof}
+## Proof (see [@lem-inner])
+
+By [@lem-inner].
+
+:::{#lem-inner}
+Inner lemma, nested in the proof body.
+:::
+:::
