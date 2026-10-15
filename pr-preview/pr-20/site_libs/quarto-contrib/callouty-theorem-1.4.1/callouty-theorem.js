@@ -42,7 +42,7 @@
 
   document.addEventListener("DOMContentLoaded", function () {
     // Only the element's own label: the first link in the title whose target is the
-    // callout itself or sits inside it. A cross-reference in the element's name, as in
+    // callout itself or the div that opens its body. A cross-reference in the element's name, as in
     // "Solution to Exercise 1", points at another callout and stays a link, and an
     // unnumbered element has no label link at all.
     var seen = new Set();
@@ -51,7 +51,11 @@
       var callout = container && container.closest(".callout");
       var target = targetOf(link);
       if (!callout || !target || seen.has(container)) { return; }
-      if (target !== callout && !callout.contains(target)) { return; }
+      // The callout itself, or the div that opens its own body: a target deeper in the
+      // body ("Proof (see @lem-inner)") or in a nested callout is another element.
+      var body = callout.querySelector(".callout-body-container");
+      var own = target === callout || (body && target === body.firstElementChild);
+      if (!own) { return; }
       seen.add(container);
       var text = link.textContent.trim();
       var kind = text.split(/[\s\u00a0]/)[0].toLowerCase();
