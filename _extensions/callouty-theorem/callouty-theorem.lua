@@ -110,7 +110,7 @@ local function read_meta(meta)
   callouty_meta = stringify_meta(meta['callouty-theorem'])
   quarto.doc.add_html_dependency({
     name = 'callouty-theorem',
-    version = '1.3.0',
+    version = '1.4.0',
     stylesheets = {'callouty-theorem.css'},
     scripts = {'callouty-theorem.js'}
   })
@@ -234,17 +234,24 @@ local function calloutify(el, is_proof)
     return el
   end
 
-  local override_title = false
+  -- Defaults: the type, number and name sit on a title bar, apart from the body,
+  -- and the callout folds (open) -- unless the metadata says otherwise.
+  local override_title = true
   local title_ref = false
   local callout_tbl = {type = "note"}
   if type(callouty_meta[typ]) == "table" then
-    override_title = callouty_meta[typ]["override-title"] or override_title
+    local ot = callouty_meta[typ]["override-title"]
+    if ot ~= nil then
+      override_title = ot == true or ot == "true"
+    end
     title_ref = callouty_meta[typ]["title-ref"] == true
       or callouty_meta[typ]["title-ref"] == "true"
     if type(callouty_meta[typ]["callout"]) == "table" then
       callout_tbl = shallow_copy(callouty_meta[typ]["callout"])
     end
   end
+  if callout_tbl.appearance == nil then callout_tbl.appearance = "default" end
+  if callout_tbl.collapse == nil then callout_tbl.collapse = false end
 
   local source_attr = (el.div and el.div.attr) or el.attr
   -- Numbered elements (theorem types, and proofs, remarks and solutions that
