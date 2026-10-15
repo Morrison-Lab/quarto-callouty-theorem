@@ -43,6 +43,15 @@ callouty-theorem:
       collapse: false
       icon: true
 
+  fig: # figures and tables are wrapped whole; the caption keeps its "Figure 1" label
+    callout:
+      type: note
+      appearance: minimal
+  tbl:
+    callout:
+      type: note
+      appearance: minimal
+
   # theorems types not specified in the metadata will be rendered as is
   cor: default # calloutify corollaries with default style
   def:
@@ -126,3 +135,20 @@ If you set the metadata of a theorem type to `default`, it will be rendered like
 
 Theorem types not specified in the metadata will be rendered as is.
 :::
+
+### Figures and tables
+
+:::{#fig-demo}
+![A flat purple swatch standing in for a plot.](swatch.png){fig-alt="A flat purple rectangle."}
+
+A figure div: the callout wraps the figure and its caption.
+:::
+
+| Type | Wrapped by |
+|------|------------|
+| `fig` | a callout |
+| `tbl` | a callout |
+
+: A table with an `#tbl-` id is wrapped the same way. {#tbl-demo}
+
+See [@fig-demo] and [@tbl-demo].

@@ -110,7 +110,7 @@ local function read_meta(meta)
   callouty_meta = stringify_meta(meta['callouty-theorem'])
   quarto.doc.add_html_dependency({
     name = 'callouty-theorem',
-    version = '1.2.2',
+    version = '1.3.0',
     stylesheets = {'callouty-theorem.css'},
     scripts = {'callouty-theorem.js'}
   })
@@ -265,11 +265,43 @@ local function calloutify(el, is_proof)
   return quarto.Callout(callout_tbl)
 end
 
--- Run in two passes so we process metadata
+-- Figures and tables: Quarto parses a `::: {#fig-x}` div and a `: caption {#tbl-x}`
+-- table into a FloatRefTarget node, which is neither a theorem nor a proof.
+-- The callout only wraps it, so Quarto still numbers it and resolves `@fig-x`.
+-- The caption already carries "Figure 1", so there is no title override or `title-ref`.
+local float_types = { fig = true, tbl = true }
+
+local function calloutify_float(el)
+  local typ = refType(el.identifier)
+  if not typ or not float_types[typ] then
+    return el
+  end
+  if not callouty_meta or not callouty_meta[typ] then
+    return el
+  end
+  local callout_tbl = {type = "note"}
+  if type(callouty_meta[typ]) == "table" and type(callouty_meta[typ]["callout"]) == "table" then
+    callout_tbl = shallow_copy(callouty_meta[typ]["callout"])
+  end
+  apply_div_callout_overrides(callout_tbl, {attributes = el.attributes})
+
+  -- The filter receives the node's data table; the node itself, which carries every
+  -- field (caption, subfigures, layout), is its `__quarto_custom_node`.
+  -- Rebuilding it field by field would drop whatever the list missed.
+  callout_tbl.content = pandoc.Blocks({el.__quarto_custom_node})
+  -- Top-down, and do not descend: a subfigure ("(a)" in a panel) stays plain
+  -- inside its panel's callout.
+  return quarto.Callout(callout_tbl), false
+end
+
+-- Run in three passes so we process metadata
 -- and then process the divs
 return {
   { Meta = read_meta },
   { Theorem = function(el) return calloutify(el, false) end,
     Proof = function(el) return calloutify(el, true) end
+  },
+  { traverse = 'topdown',
+    FloatRefTarget = calloutify_float
   }
 }
