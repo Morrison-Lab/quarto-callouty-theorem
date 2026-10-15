@@ -27,7 +27,13 @@
   }, true);
 
   document.addEventListener("DOMContentLoaded", function () {
+    // Only the element's own label, the first link in the title: a cross-reference
+    // inside the element's name, as in "Solution to Exercise 1", stays a link.
+    var seen = [];
     document.querySelectorAll(LABEL).forEach(function (link) {
+      var container = link.closest(".callout-title-container");
+      if (seen.indexOf(container) !== -1) { return; }
+      seen.push(container);
       var text = link.textContent.trim();
       var kind = text.split(/[\s ]/)[0].toLowerCase();
       var label = document.createElement("span");
