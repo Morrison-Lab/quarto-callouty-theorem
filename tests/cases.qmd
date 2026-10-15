@@ -5,6 +5,7 @@ format:
     filters:
       - callouty-theorem
   pdf:
+    links-as-notes: true
     filters:
       - callouty-theorem
 
@@ -25,6 +26,10 @@ callouty-theorem:
       type: note
       appearance: default
       collapse: true
+  tbl: # a table with many link footnotes must still compile in PDF
+    callout:
+      type: note
+      appearance: minimal
   remark: # override-title off on a proof-like type: never a bar titled "Note"
     override-title: false
     callout:
@@ -72,4 +77,42 @@ By [@eq-inner].
 $$
 2 + 2 = 4
 $$ {#eq-inner}
+:::
+
+:::{#tbl-links}
+
+| Site | Number |
+|:--|--:|
+| [Site 1](https://example.org/1) | 1 |
+| [Site 2](https://example.org/2) | 2 |
+| [Site 3](https://example.org/3) | 3 |
+| [Site 4](https://example.org/4) | 4 |
+| [Site 5](https://example.org/5) | 5 |
+| [Site 6](https://example.org/6) | 6 |
+| [Site 7](https://example.org/7) | 7 |
+| [Site 8](https://example.org/8) | 8 |
+| [Site 9](https://example.org/9) | 9 |
+| [Site 10](https://example.org/10) | 10 |
+| [Site 11](https://example.org/11) | 11 |
+| [Site 12](https://example.org/12) | 12 |
+| [Site 13](https://example.org/13) | 13 |
+| [Site 14](https://example.org/14) | 14 |
+| [Site 15](https://example.org/15) | 15 |
+| [Site 16](https://example.org/16) | 16 |
+| [Site 17](https://example.org/17) | 17 |
+| [Site 18](https://example.org/18) | 18 |
+| [Site 19](https://example.org/19) | 19 |
+| [Site 20](https://example.org/20) | 20 |
+| [Site 21](https://example.org/21) | 21 |
+| [Site 22](https://example.org/22) | 22 |
+| [Site 23](https://example.org/23) | 23 |
+| [Site 24](https://example.org/24) | 24 |
+| [Site 25](https://example.org/25) | 25 |
+| [Site 26](https://example.org/26) | 26 |
+| [Site 27](https://example.org/27) | 27 |
+| [Site 28](https://example.org/28) | 28 |
+| [Site 29](https://example.org/29) | 29 |
+| [Site 30](https://example.org/30) | 30 |
+
+Thirty links, each a footnote in PDF.
 :::
