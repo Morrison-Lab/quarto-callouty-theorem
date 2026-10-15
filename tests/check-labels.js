@@ -4,12 +4,16 @@
 // (the unnumbered solution) stays a link with no anchor.
 const { chromium } = require('playwright');
 const assert = require('assert');
+const path = require('path');
+const { pathToFileURL } = require('url');
 
 (async () => {
-  const file = process.argv[2];
-  const browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH || '/opt/pw-browsers/chromium' });
+  assert(process.argv[2], 'usage: node tests/check-labels.js <path to example.html>');
+  const url = pathToFileURL(path.resolve(process.argv[2])).href;
+  const launch = process.env.CHROMIUM_PATH ? { executablePath: process.env.CHROMIUM_PATH } : {};
+  const browser = await chromium.launch(launch);
   const page = await browser.newPage();
-  await page.goto('file://' + file);
+  await page.goto(url);
   await page.waitForTimeout(500);
   const rows = await page.$$eval('.callout-title-container', (els) => els.map((el) => ({
     text: el.textContent.trim(),

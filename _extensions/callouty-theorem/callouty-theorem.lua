@@ -287,6 +287,16 @@ local function calloutify(el, is_proof)
 
   apply_div_callout_overrides(callout_tbl, source_attr)
 
+  -- Per-div attributes cannot bring back a bar that has nothing to say:
+  -- outside HTML a theorem-type body prints its own heading, and a callout with no
+  -- title (override-title off, no title-ref) would draw a bar titled "Note" over the
+  -- body's own heading. Both stay a minimal box, whatever the div sets.
+  local outside_html_theorem = my_types[typ] and not is_proof and not quarto.doc.is_format('html')
+  if outside_html_theorem
+    or (not callout_tbl.title and callout_tbl.appearance ~= "simple") then
+    callout_tbl.appearance = "minimal"
+  end
+
   -- The header now names the element, so mark the callout for the stylesheet
   -- to drop the body's repeat of it.
   if callout_tbl.title then
