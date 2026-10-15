@@ -27,7 +27,7 @@ callouty-theorem:
       collapse: true
 ---
 
-Used by `check-cases.js` (HTML) and by eye (PDF): no case may show a "Note" bar above a body that prints its own heading.
+Excluded from the project render (`render:` in `_quarto-website.yml`); render it by hand with `quarto render tests/cases.qmd`. Used by `check-cases.js` (HTML) and by eye (PDF): no case may show a "Note" bar above a body that prints its own heading.
 
 :::{#thm-explicit}
 ## Explicit appearance
