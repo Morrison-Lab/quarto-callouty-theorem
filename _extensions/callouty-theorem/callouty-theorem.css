@@ -3,3 +3,8 @@
 .callout.callouty-titled .callout-body :is(.theorem-title, .proof-title, .div-anchor) {
   display: none;
 }
+
+/* A preview of a callout fills the popup. */
+.tippy-box .tippy-content > .callout {
+  margin: 0;
+}

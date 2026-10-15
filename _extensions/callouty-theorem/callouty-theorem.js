@@ -27,4 +27,57 @@
       link.setAttribute("title", "Link to this " + kind);
     });
   });
+
+  // Hover preview of a cross-reference whose target sits inside a callout.
+  //
+  // Quarto's preview copies the target's innerHTML, and a numbered theorem, example or
+  // solution is a div inside the callout, so the preview showed bare content without the
+  // callout's header, colour and bar.
+  // Quarto also appends the preview to the link's parent, so a link in a callout header
+  // passed the header's bold type on to the whole preview.
+  // For such links this swaps the preview content for an open copy of the whole callout
+  // and appends the preview to the body.
+  function openCopy(callout) {
+    var copy = callout.cloneNode(true);
+    copy.removeAttribute("id");
+    copy.querySelectorAll("[id]").forEach(function (el) { el.removeAttribute("id"); });
+    copy.querySelectorAll(".callout-collapse").forEach(function (el) { el.classList.add("show"); });
+    copy.querySelectorAll("[data-bs-toggle], [data-bs-target]").forEach(function (el) {
+      el.removeAttribute("data-bs-toggle");
+      el.removeAttribute("data-bs-target");
+    });
+    copy.querySelectorAll(".callout-btn-toggle").forEach(function (el) { el.remove(); });
+    var box = document.createElement("div");
+    box.appendChild(copy);
+    if (window.Quarto && window.Quarto.typesetMath) {
+      window.Quarto.typesetMath(box);
+    }
+    return box.innerHTML;
+  }
+
+  function patchPreviews() {
+    document.querySelectorAll("a.quarto-xref").forEach(function (link) {
+      var instance = link._tippy;
+      var href = link.getAttribute("href") || "";
+      if (!instance || href.charAt(0) !== "#" || !instance.props.onTrigger) {
+        return;
+      }
+      var target = document.getElementById(href.slice(1));
+      var callout = target && target.closest(".callout");
+      if (!callout) {
+        return;
+      }
+      var quartoTrigger = instance.props.onTrigger;
+      instance.setProps({
+        appendTo: function () { return document.body; },
+        onTrigger: function (inst, event) {
+          quartoTrigger(inst, event);
+          inst.setContent(openCopy(callout));
+        }
+      });
+    });
+  }
+
+  // Quarto creates the previews in an inline script at the end of the page.
+  window.addEventListener("load", patchPreviews);
 })();
