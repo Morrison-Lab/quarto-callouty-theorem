@@ -73,6 +73,13 @@ Only the label gets the link; a cross-reference inside the name, as in "Solution
   The caption keeps the float recognizable there; HTML and slides are unchanged.
 - You can override callout settings for individual theorem/proof divs by adding attributes directly on the div. Per-div attributes take precedence over the global `callouty-theorem` metadata config.
 
+### Definition list (since 1.5.0)
+
+Set `def-list: true` in a page's or project's metadata, and the page ends with a "Definitions on this page" list: one entry per `#def-` div, in page order, linked to the div.
+Included subfiles count, because the filter reads the rendered document.
+`def-list-title` changes the heading.
+The filter is off by default.
+
 See the source code of [example.qmd](example.qmd) for details.
 
 ## License
