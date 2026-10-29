@@ -44,7 +44,7 @@ function Pandoc(doc)
     table.insert(items, { pandoc.Plain({ link }) })
   end
   doc.blocks:insert(pandoc.Header(2, heading,
-    pandoc.Attr("sec-def-list", { "unnumbered" })))
+    pandoc.Attr("definition-list", { "unnumbered" })))
   doc.blocks:insert(pandoc.BulletList(items))
   return doc
 end
