@@ -75,7 +75,8 @@ function Pandoc(doc)
   local at = #doc.blocks + 1
   for i, block in ipairs(doc.blocks) do
     if block.t == "Div" and block.identifier == "refs" then
-      at = i
+      -- Keep the "References" heading with its block.
+      at = (i > 1 and doc.blocks[i - 1].t == "Header") and i - 1 or i
       break
     end
   end
