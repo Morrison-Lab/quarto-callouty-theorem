@@ -70,9 +70,23 @@ function Pandoc(doc)
     table.insert(items, { pandoc.Plain({ link }) })
   end
   -- A top-level heading, so the list is not nested inside the last section.
-  doc.blocks:insert(pandoc.Header(1, heading,
+  -- Before an explicit "# References" + #refs pair, so the References stay last,
+  -- as they do when citeproc appends them itself. Any other layout appends at
+  -- the end: a new level-1 section placed before a deeper heading, or before a
+  -- #refs block with no heading, would swallow the blocks that follow it.
+  local at = #doc.blocks + 1
+  for i, block in ipairs(doc.blocks) do
+    if block.t == "Div" and block.identifier == "refs" then
+      local prev = doc.blocks[i - 1]
+      if prev and prev.t == "Header" and prev.level == 1 then
+        at = i - 1
+      end
+      break
+    end
+  end
+  doc.blocks:insert(at, pandoc.Header(1, heading,
     pandoc.Attr("def-list-section", { "unnumbered" })))
-  doc.blocks:insert(pandoc.BulletList(items))
+  doc.blocks:insert(at + 1, pandoc.BulletList(items))
   return doc
 end
 
