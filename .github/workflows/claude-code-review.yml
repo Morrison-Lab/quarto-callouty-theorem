@@ -1,0 +1,31 @@
+# Thin caller for the central Morrison-Lab/gha reusable Claude code-review
+# workflow. Requires the CLAUDE_CODE_OAUTH_TOKEN repository secret (passed via
+# `secrets: inherit`).
+name: Claude Code Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, ready_for_review, reopened]
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'Pull request number to review'
+        required: true
+        type: string
+
+jobs:
+  review:
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: write
+      id-token: write
+      actions: read
+    uses: Morrison-Lab/gha/.github/workflows/claude-code-review.yml@v2
+    secrets: inherit
+    with:
+      pr-number: ${{ inputs.pr_number }}
+      prompt-addendum: |
+        This is a Quarto extension (Lua filter plus example.qmd), not a book.
+        Focus the review on the Lua filter's correctness, the extension
+        metadata, and whether example.qmd still renders.
