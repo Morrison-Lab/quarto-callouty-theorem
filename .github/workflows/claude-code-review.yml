@@ -19,8 +19,8 @@ jobs:
       contents: read
       pull-requests: write
       issues: write
-      id-token: write
       actions: read
+      checks: read
     uses: Morrison-Lab/gha/.github/workflows/claude-code-review.yml@v2
     secrets: inherit
     with:
