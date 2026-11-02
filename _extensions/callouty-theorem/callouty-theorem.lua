@@ -179,19 +179,25 @@ local function apply_div_callout_overrides(callout_tbl, source_attr)
     return
   end
 
-  local attrs = source_attr.attributes
-  for _, key in ipairs({"type", "appearance"}) do
-    if attrs[key] ~= nil then
-      callout_tbl[key] = attrs[key]
+  local attr = pandoc.Attr("", source_attr.classes)
+  for key, value in pairs(source_attr.attributes) do
+    if key == "type" or key == "appearance" then
+      callout_tbl[key] = value
+    elseif key == "collapse" or key == "icon" then
+      local parsed = parse_boolean_attr(value, key)
+      if parsed ~= nil then
+        callout_tbl[key] = parsed
+      end
+    else
+      attr.attributes[key] = value
     end
   end
+  callout_tbl.attr = attr
 
-  for _, key in ipairs({"collapse", "icon"}) do
-    local parsed = parse_boolean_attr(attrs[key], key)
-    if parsed ~= nil then
-      callout_tbl[key] = parsed
-    end
-  end
+  -- Remove the classes and attributes now transferred to the callout.
+  -- Leave the theorem's identifier and name unchanged.
+  source_attr.classes = pandoc.List()
+  source_attr.attributes = {}
 end
 
 -- LaTeX cannot nest tcolorbox callouts: Quarto prints an inner one as a block quote
@@ -300,7 +306,10 @@ local function calloutify(el, is_proof)
   -- The header now names the element, so mark the callout for the stylesheet
   -- to drop the body's repeat of it.
   if callout_tbl.title then
-    callout_tbl.attr = pandoc.Attr('', {'callouty-titled'})
+    -- Add to the attributes the div's own were transferred into, not replace them.
+    local attr = callout_tbl.attr or pandoc.Attr()
+    attr.classes:insert('callouty-titled')
+    callout_tbl.attr = attr
   end
 
   mark_nested_floats((el.div and el.div.content) or el.content)

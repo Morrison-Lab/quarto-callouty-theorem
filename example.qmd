@@ -153,3 +153,12 @@ A figure div: the callout wraps the figure and its caption.
 : A table with an `#tbl-` id is wrapped the same way. {#tbl-demo}
 
 See [@fig-demo] and [@tbl-demo].
+
+### Corner cases
+
+The filter will transfer the irrelevant attributes to the wrapping callout. See @thm-margin for example.
+
+:::{#thm-margin .column-margin}
+
+This is a theorem placed in a margin column.
+:::
