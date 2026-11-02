@@ -318,7 +318,8 @@ end
 -- table into a FloatRefTarget node, which is neither a theorem nor a proof.
 -- The callout only wraps it, so Quarto still numbers it and resolves `@fig-x`.
 -- The caption already carries "Figure 1", so there is no title override or `title-ref`.
-local float_types = { fig = true, tbl = true }
+-- Any float type configured under `callouty-theorem:` is wrapped, so a custom type
+-- declared with `crossref: custom:` (`kind: float`) gets a callout like `fig` and `tbl`.
 
 local function calloutify_float(el)
   -- In LaTeX the callout is a tcolorbox, and footnotes inside one (a table of links
@@ -328,7 +329,7 @@ local function calloutify_float(el)
     return el
   end
   local typ = refType(el.identifier)
-  if not typ or not float_types[typ] then
+  if not typ then
     return el
   end
   if not callouty_meta or not callouty_meta[typ] then
