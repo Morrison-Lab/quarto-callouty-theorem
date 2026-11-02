@@ -306,7 +306,10 @@ local function calloutify(el, is_proof)
   -- The header now names the element, so mark the callout for the stylesheet
   -- to drop the body's repeat of it.
   if callout_tbl.title then
-    callout_tbl.attr = pandoc.Attr('', {'callouty-titled'})
+    -- Add to the attributes the div's own were transferred into, not replace them.
+    local attr = callout_tbl.attr or pandoc.Attr()
+    attr.classes:insert('callouty-titled')
+    callout_tbl.attr = attr
   end
 
   mark_nested_floats((el.div and el.div.content) or el.content)
