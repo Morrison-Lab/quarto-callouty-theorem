@@ -362,9 +362,25 @@ local function calloutify_float(el)
   if caption and caption.t then
     caption = pandoc.Blocks({caption})
   end
-  if quarto.doc.is_format("html")
-    and (meta_typ["title-from-caption"] == true or meta_typ["title-from-caption"] == "true")
-    and caption and #caption > 0 then
+  local title_from_caption = meta_typ["title-from-caption"] == true
+    or meta_typ["title-from-caption"] == "true"
+  -- A heading that opens the float is its caption, as a heading is a theorem's title.
+  -- Quarto took the div's last paragraph as the caption, so that paragraph goes back to
+  -- the end of the body.
+  local body = el.content
+  if title_from_caption and body and body.t then
+    body = pandoc.Blocks({body})
+  end
+  if title_from_caption and body and #body > 0 and body[1].t == "Header" then
+    local header = body:remove(1)
+    if caption and #caption > 0 then
+      body:extend(caption)
+    end
+    caption = pandoc.Blocks({pandoc.Plain(header.content)})
+    el.content = body
+    el.caption_long = caption
+  end
+  if quarto.doc.is_format("html") and title_from_caption and caption and #caption > 0 then
     local title = pandoc.List({label_cite(el.identifier), pandoc.Str(":"), pandoc.Space()})
     title:extend(pandoc.utils.blocks_to_inlines(caption))
     callout_tbl.title = title

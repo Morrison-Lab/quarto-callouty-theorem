@@ -37,6 +37,11 @@ const { pathToFileURL } = require('url');
   assert.strictEqual(dat.length, 1, 'the dataset title bar needs its label and caption');
   const hidden = await page.$eval('#dat-sample figcaption', (el) => getComputedStyle(el).display);
   assert.strictEqual(hidden, 'none', 'the float repeats its caption below the title bar');
+  // A heading that opens the float is its caption, and does not stay in the body.
+  const headed = rows.filter((r) => /Dataset[\s ]\d: A headed dataset/.test(r.text));
+  assert.strictEqual(headed.length, 1, 'the heading is the float title');
+  const stray = await page.$$eval('#dat-headed h1, #dat-headed h2, #dat-headed h3', (els) => els.length);
+  assert.strictEqual(stray, 0, 'the heading is repeated in the float body');
   console.log('ok', rows.length, 'titles checked');
   await browser.close();
 })().catch((e) => { console.error(e); process.exit(1); });
