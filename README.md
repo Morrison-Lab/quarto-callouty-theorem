@@ -73,6 +73,9 @@ Only the label gets the link; a cross-reference inside the name, as in "Solution
   The caption keeps the float recognizable there; HTML and slides are unchanged.
   Since 1.6.0, any float type declared with `crossref: custom:` and `kind: float` (a `dat-` dataset or a `vid-` video, say) is wrapped too, under its own key in `callouty-theorem:`, exactly as `fig` and `tbl` are.
   A float type with no entry under `callouty-theorem:` is left as it is.
+  Since 1.7.0, `title-from-caption: true` on a float type puts its numbered label and caption on the callout's title bar ("Dataset 1: ..."), with `callout: {appearance: default}`, so the bar folds like a theorem's, and the float's own caption below is hidden.
+  Use it for a float with a long body, such as a dataset description, where a bare caption at the bottom reads as an afterthought.
+  It applies to HTML-based formats only; PDF keeps the plain float.
 - You can override callout settings for individual theorem/proof divs by adding attributes directly on the div. Per-div attributes take precedence over the global `callouty-theorem` metadata config.
 
 ### Definition list (since 1.5.0)

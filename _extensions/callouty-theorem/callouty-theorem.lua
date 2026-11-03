@@ -353,6 +353,26 @@ local function calloutify_float(el)
   end
   apply_div_callout_overrides(callout_tbl, {attributes = el.attributes})
 
+  -- `title-from-caption: true` puts the float's numbered label and caption on a title
+  -- bar ("Dataset 1: The WCGS data"), which folds like a theorem's, and the stylesheet
+  -- drops the float's own copy of the caption. HTML only: the PDF keeps the plain float.
+  local meta_typ = type(callouty_meta[typ]) == "table" and callouty_meta[typ] or {}
+  -- The caption is one Plain block, or a list of blocks.
+  local caption = el.caption_long
+  if caption and caption.t then
+    caption = pandoc.Blocks({caption})
+  end
+  if quarto.doc.is_format("html")
+    and (meta_typ["title-from-caption"] == true or meta_typ["title-from-caption"] == "true")
+    and caption and #caption > 0 then
+    local title = pandoc.List({label_cite(el.identifier), pandoc.Str(":"), pandoc.Space()})
+    title:extend(pandoc.utils.blocks_to_inlines(caption))
+    callout_tbl.title = title
+    local attr = callout_tbl.attr or pandoc.Attr()
+    attr.classes:insert("callouty-float-titled")
+    callout_tbl.attr = attr
+  end
+
   -- The filter receives the node's data table; the node itself, which carries every
   -- field (caption, subfigures, layout), is its `__quarto_custom_node`.
   -- Rebuilding it field by field would drop whatever the list missed.
