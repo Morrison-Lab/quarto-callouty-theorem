@@ -4,6 +4,12 @@
   display: none;
 }
 
+/* A float whose header carries its label and caption ("Dataset 1: ...")
+   (`title-from-caption`) does not repeat the caption below. */
+.callout.callouty-float-titled .callout-body figcaption {
+  display: none;
+}
+
 /* A preview of a callout fills the popup. */
 .tippy-box .tippy-content > .callout {
   margin: 0;
