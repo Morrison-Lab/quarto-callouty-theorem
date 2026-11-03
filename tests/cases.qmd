@@ -136,3 +136,9 @@ A sample of ten rows, with the columns `x` and `y`.
 
 A sample dataset
 :::
+
+::: {#dat-headed}
+## A headed dataset
+
+A sample of ten rows, titled by a heading rather than a last paragraph.
+:::

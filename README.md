@@ -76,6 +76,9 @@ Only the label gets the link; a cross-reference inside the name, as in "Solution
   Since 1.7.0, `title-from-caption: true` on a float type puts its numbered label and caption on the callout's title bar ("Dataset 1: ..."), with `callout: {appearance: default}`, so the bar folds like a theorem's, and the float's own caption below is hidden.
   Use it for a float with a long body, such as a dataset description, where a bare caption at the bottom reads as an afterthought.
   It applies to HTML-based formats only; PDF keeps the plain float.
+  Since 1.8.0, a heading at the top of such a float's div is its caption, as a heading is a theorem's title, so `::: {#dat-wcgs}` followed by `## The WCGS data` gives "Dataset 1: The WCGS data".
+  Quarto itself takes a float's caption from the div's last paragraph, so the extension moves that paragraph back to the end of the body.
+  A div with no heading keeps the last-paragraph caption.
 - You can override callout settings for individual theorem/proof divs by adding attributes directly on the div. Per-div attributes take precedence over the global `callouty-theorem` metadata config.
 
 ### Definition list (since 1.5.0)
