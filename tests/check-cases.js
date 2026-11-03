@@ -32,6 +32,11 @@ const { pathToFileURL } = require('url');
   });
   const own = rows.filter((r) => /(Theorem|Definition)[\s ]\d/.test(r.text));
   own.forEach((r) => assert.strictEqual(r.anchors, 1, 'own label needs one anchor: ' + r.text));
+  // `title-from-caption`: the float's label and caption are the title, and its own caption is hidden.
+  const dat = rows.filter((r) => /Dataset[\s ]\d: A sample dataset/.test(r.text));
+  assert.strictEqual(dat.length, 1, 'the dataset title bar needs its label and caption');
+  const hidden = await page.$eval('#dat-sample figcaption', (el) => getComputedStyle(el).display);
+  assert.strictEqual(hidden, 'none', 'the float repeats its caption below the title bar');
   console.log('ok', rows.length, 'titles checked');
   await browser.close();
 })().catch((e) => { console.error(e); process.exit(1); });

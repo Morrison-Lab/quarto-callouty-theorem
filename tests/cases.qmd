@@ -34,6 +34,20 @@ callouty-theorem:
     override-title: false
     callout:
       type: tip
+  dat: # a custom float whose title bar carries its label and caption
+    title-from-caption: true
+    callout:
+      type: note
+      appearance: default
+
+crossref:
+  custom:
+    - kind: float
+      key: dat
+      latex-env: datasetfloat
+      reference-prefix: Dataset
+      caption-prefix: Dataset
+      latex-list-of-description: Dataset
 ---
 
 Used by `check-cases.js` (HTML) and `check-pdf.js` (PDF), after `quarto render tests/cases.qmd`: no case may show a bar titled "Note" or "Tip" above a body that prints its own heading.
@@ -115,4 +129,10 @@ $$ {#eq-inner}
 | [Site 30](https://example.org/30) | 30 |
 
 Thirty links, each a footnote in PDF.
+:::
+
+::: {#dat-sample}
+A sample of ten rows, with the columns `x` and `y`.
+
+A sample dataset
 :::
